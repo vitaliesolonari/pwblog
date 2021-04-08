@@ -1,4 +1,4 @@
-package it.tss.blog.ping.boundary;
+package it.tss.pwblog.ping.boundary;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

@@ -1,4 +1,4 @@
-package it.tss.blog.ping.boundary;
+package it.tss.pwblog.ping.boundary;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
