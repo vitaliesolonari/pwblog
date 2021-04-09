@@ -37,18 +37,48 @@
             <version>2.5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.airhacks</groupId>
-            <artifactId>jaxrs-cors</artifactId>
-            <version>0.0.2</version>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.3</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>8.16</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.microprofile-ext.openapi-ext</groupId>
+            <artifactId>openapi-ui</artifactId>
+            <version>1.1.4</version>
         </dependency>
     </dependencies>
     <build>
+        <filters>
+            <filter>src/main/resources/env/${env}.properties</filter>
+        </filters>
+
+        <!-- Map ${} into resources -->
+        <resources>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>

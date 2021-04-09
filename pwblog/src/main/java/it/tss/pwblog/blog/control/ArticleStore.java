@@ -7,7 +7,7 @@ package it.tss.pwblog.blog.control;
 
 import it.tss.pwblog.blog.boundary.dto.ArticleUpdate;
 import it.tss.pwblog.blog.entity.Article;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
@@ -15,16 +15,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
- * @author User
+ * @author indra
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRED)
@@ -33,41 +29,34 @@ public class ArticleStore {
     @PersistenceContext
     private EntityManager em;
 
+    @Inject
+    @ConfigProperty(name = "maxResult", defaultValue = "10")
+    int maxResult;
+
     public Article createArt(Article u) {
         return em.merge(u);
     }
 
-    private List<Article> searchQuery(Long id, String title, LocalDate ffrom, LocalDate tto) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Article> query = cb.createQuery(Article.class);
-        Root<Article> root = query.from(Article.class);
-        query.select(root).where(searchPredicate(cb, root, id, title, ffrom, tto));
-        return em.createQuery(query)
+    private TypedQuery<Article> searchQuery(Long id, String title, LocalDateTime ffrom, LocalDateTime tto) {
+        return em.createQuery("SELECT E FROM Article E WHERE E.id :id AND E.title LIKE :title AND E.createdOn >= ffrom AND E.createdOn <= tto ORDER BY E.id ", Article.class)
+                .setParameter("title", title == null ? "%" : "%" + title + "%")
+                .setParameter("id", id == null ? "%" : id)
+                .setParameter("from", ffrom == null ? "%" : ffrom)
+                .setParameter("to", tto == null ? "%" : tto);
+    }
+
+    public Optional<List<Article>> findAllArticles(int start, int maxResult) {
+        List found = searchQuery(null, null, null, null)
+                .setFirstResult(start)
+                .setMaxResults(maxResult == 0 ? this.maxResult : maxResult)
                 .getResultList();
-    }
-
-    public Predicate searchPredicate(CriteriaBuilder cb, Root<Article> root, Long id, String title, LocalDate ffrom, LocalDate tto) {
-        Predicate result = cb.conjunction();
-        if (id != null) {
-            result = cb.and(result, cb.equal(root.get("id"), id));
-        }
-        if (title != null) {
-            result = cb.and(result, cb.equal(root.get("title"), title));
-        }
-        if (ffrom != null && tto != null) {
-            result = cb.and(result, cb.greaterThanOrEqualTo(root.get("createdOn"), ffrom), cb.lessThanOrEqualTo(root.get("createdOn"), tto));
-        }
-        return result;
-    }
-
-    public Optional<List<Article>> findAllArticles() {
-        List found = searchQuery(null, null, null, null);
         return found.isEmpty() ? Optional.empty() : Optional.of(found);
     }
 
     public Optional<Article> findArticleById(Long id) {
-        Article found = searchQuery(id, null, null, null).get(0);
+        Article found = em.find(Article.class, id);
         return found == null ? Optional.empty() : Optional.of(found);
+
     }
 
     public Article update(Article article, ArticleUpdate u) {
@@ -77,13 +66,9 @@ public class ArticleStore {
         return em.merge(article);
     }
 
-    public Optional<List<Article>> findArticlesByPeriod(LocalDate from, LocalDate to) {
-        List found = searchQuery(null, null, from, to);
+    public Optional<List<Article>> findArticlesByPeriod(LocalDateTime from, LocalDateTime to) {
+        List found = searchQuery(null, null, from, to).getResultList();
         return found.isEmpty() ? Optional.empty() : Optional.of(found);
     }
 
-    public Optional<List<Article>> findArticlesByTitle(String title) {
-        List found = searchQuery(null, title, null, null);
-        return found.isEmpty() ? Optional.empty() : Optional.of(found);
-    }
 }

@@ -6,8 +6,6 @@
 package it.tss.pwblog.blog.boundary;
 
 import it.tss.pwblog.blog.control.CommentStore;
-import it.tss.pwblog.blog.entity.Comment;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.RolesAllowed;
@@ -21,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 /**
  *
- * @author User
+ * @author indra
  */
 @DenyAll
 @Path("/comments")
@@ -50,7 +48,8 @@ public class CommentsResource {
     @Path("{commentId}")
     public CommentResource search(@PathParam("commentId") Long id) {
         CommentResource sub = resource.getResource(CommentResource.class);
-        sub.setUpperCommentId(id);
+        sub.setCommentId(id);
         return sub;
     }
+
 }

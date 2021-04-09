@@ -11,31 +11,28 @@ import it.tss.pwblog.security.control.SecurityEncoding;
 import java.util.List;
 import java.util.Optional;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  *
- * @author alfonso
+ * @author User
  */
 @RequestScoped
 @Transactional(Transactional.TxType.REQUIRED)
 public class BlogUserStore {
 
     private System.Logger LOG = System.getLogger(BlogUserStore.class.getName());
-
+    
     @PersistenceContext
     private EntityManager em;
-
+    
     private List<BlogUser> searchQuery(boolean banned, String email, Long id) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<BlogUser> query = cb.createQuery(BlogUser.class);
@@ -44,7 +41,7 @@ public class BlogUserStore {
         return em.createQuery(query)
                 .getResultList();
     }
-
+    
     public Predicate searchPredicate(CriteriaBuilder cb, Root<BlogUser> root, boolean banned, String email, Long id) {
         Predicate result = cb.conjunction();
         result = cb.and(result, cb.equal(root.get("banned"), banned));
@@ -70,7 +67,7 @@ public class BlogUserStore {
         BlogUser found = em.find(BlogUser.class, id);
         return found == null ? Optional.empty() : Optional.of(found);
     }
-
+    
     public Optional<BlogUser> findUserByEmailAndPwd(String email, String pwd) {
         try {
             BlogUser found = em.createNamedQuery(BlogUser.LOGIN, BlogUser.class)
@@ -82,7 +79,7 @@ public class BlogUserStore {
             return Optional.empty();
         }
     }
-
+    
     public BlogUser createUsr(BlogUser u) {
         u.setPwd(SecurityEncoding.shaHash(u.getPwd()));
         BlogUser saved = em.merge(u);
@@ -93,7 +90,7 @@ public class BlogUserStore {
         user.setFname(u);
         user.setLname(u);
         user.setEmail(u);
-        user.setPwd(SecurityEncoding.shaHash(u.pwd));
+        user.setPwd(SecurityEncoding.shaHash(u.pwd));      
         user.setRole(u);
         user.setBanned(u);
         return em.merge(user);

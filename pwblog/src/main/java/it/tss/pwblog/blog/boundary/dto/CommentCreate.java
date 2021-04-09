@@ -6,7 +6,6 @@
 package it.tss.pwblog.blog.boundary.dto;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -16,7 +15,7 @@ public class CommentCreate {
 
     @NotEmpty
     public String text;
-    @NotNull
+    @NotEmpty
     public int rating;
 
 }

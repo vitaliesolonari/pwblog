@@ -15,7 +15,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
  *
- * @author Paolo
+ * @author User
  */
 public class EntityListener {
 
@@ -27,7 +27,7 @@ public class EntityListener {
 
     @PostConstruct
     public void init() {
-        System.out.println("init entity listener..");
+        System.out.println("init entity listener...");
     }
 
     @PrePersist
@@ -45,4 +45,5 @@ public class EntityListener {
         }
         e.setModifiedOn(LocalDateTime.now());
     }
+
 }

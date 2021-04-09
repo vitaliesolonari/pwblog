@@ -16,7 +16,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author User
+ * @author indra
  */
 @Entity
 @Table(name = "comments")
@@ -29,24 +29,28 @@ public class Comment extends AbstractEntity {
 
     @Column
     private String text;
+
     @Column
     private Long articleId;
+
+    @Column
+    private Long userId;
+
     @Column
     private int rating;
+
     @Column
     private Long answersTo;
+
     @Column
     private boolean deleted = false;
 
     public Comment() {
     }
 
-    public Comment(CommentCreate c, Long userId, Long articleId) {
+    public Comment(CommentCreate c) {
         this.text = c.text;
         this.rating = c.rating;
-        this.articleId = articleId;
-        this.createdById = userId;
-
     }
 
     public Long getId() {
@@ -71,6 +75,14 @@ public class Comment extends AbstractEntity {
 
     public void setArticleId(Long articleId) {
         this.articleId = articleId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public int getRating() {
@@ -99,8 +111,8 @@ public class Comment extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + Objects.hashCode(this.id);
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.id);
         return hash;
     }
 

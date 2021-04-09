@@ -9,7 +9,6 @@ import it.tss.pwblog.blog.boundary.adapters.RoleTypeAdapter;
 import it.tss.pwblog.blog.entity.BlogUser;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -25,7 +24,8 @@ public class BlogUserCreate {
     public String email;
     @NotEmpty
     public String pwd;
-    @NotNull
+
+    @NotEmpty
     @JsonbTypeAdapter(RoleTypeAdapter.class)
     public BlogUser.Role role;
 }

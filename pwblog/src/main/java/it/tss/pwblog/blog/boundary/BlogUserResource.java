@@ -6,7 +6,6 @@
 package it.tss.pwblog.blog.boundary;
 
 import it.tss.pwblog.blog.boundary.dto.BlogUserUpdate;
-import it.tss.pwblog.blog.boundary.dto.BlogUserUpdate;
 import it.tss.pwblog.blog.control.BlogUserStore;
 import it.tss.pwblog.blog.control.CommentStore;
 import it.tss.pwblog.blog.entity.BlogUser;
@@ -55,10 +54,6 @@ public class BlogUserResource {
         return newUser;
     }
 
-    /**
-     *
-     * @return
-     */
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser() {
@@ -76,10 +71,6 @@ public class BlogUserResource {
         return Response.status(Response.Status.ACCEPTED).build();
     }
 
-    /**
-     *
-     * @return List<Comment> lista commenti scritti dall'utente
-     */
     @GET
     @Path("/comments")
     @Produces(MediaType.APPLICATION_JSON)

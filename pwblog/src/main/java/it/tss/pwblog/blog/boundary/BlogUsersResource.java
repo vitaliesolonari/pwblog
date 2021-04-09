@@ -7,7 +7,6 @@ package it.tss.pwblog.blog.boundary;
 
 import it.tss.pwblog.blog.boundary.dto.BlogUserCreate;
 import it.tss.pwblog.blog.control.BlogUserStore;
-import it.tss.pwblog.blog.control.CommentStore;
 import it.tss.pwblog.blog.entity.BlogUser;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -19,13 +18,10 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -85,8 +81,8 @@ public class BlogUsersResource {
     @RolesAllowed({"ADMIN", "USER"})
     @Path("{userId}")
     public BlogUserResource search(@PathParam("userId") Long id) {
-        boolean isUserRole = securityCtx.isUserInRole(BlogUser.Role.USER.name());
-        if (isUserRole && (jwt == null || jwt.getSubject() == null || Long.parseLong(jwt.getSubject()) != id)) {
+        boolean isUserRole = securityCtx.isUserInRole(BlogUser.Role.USER.name()); // ritorna vero se il ruolo contenuto nel token è USER
+        if (isUserRole && (jwt == null || jwt.getSubject() == null || Long.parseLong(jwt.getSubject()) != id)) { // jwt.getSubject ritorna l'id dello user
             throw new ForbiddenException(Response.status(Response.Status.FORBIDDEN).entity("Access forbidden: role not allowed").build());
         }
         BlogUserResource sub = resource.getResource(BlogUserResource.class);

@@ -14,43 +14,44 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
  *
- * @author User
+ * @author indra
  */
-@NamedQueries({
-    @NamedQuery(name = BlogUser.LOGIN, query = "select e from BlogUser e where e.email= :email and e.pwd= :pwd and e.banned=false")
-})
 @Entity
 @Table(name = "users")
 public class BlogUser extends AbstractEntity {
 
     public static final String LOGIN = "User.login";
+
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", initialValue = 1, allocationSize = 1)
     @GeneratedValue(generator = "user_sequence")
     protected Long id;
 
-    @Column(nullable = false)
-    private String fname;
-    @Column(nullable = false)
-    private String lname;
-    @Column(nullable = false)
-    private String email;
-    @Column(nullable = false)
-    private String pwd;
-
     public enum Role {
         ADMIN, USER
     }
+
+    @Column(nullable = false)
+    private String fname;
+
+    @Column(nullable = false)
+    private String lname;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String pwd;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
     @Column(nullable = false)
     private boolean banned = false;
 
@@ -147,8 +148,8 @@ public class BlogUser extends AbstractEntity {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 43 * hash + Objects.hashCode(this.id);
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -169,5 +170,7 @@ public class BlogUser extends AbstractEntity {
         }
         return true;
     }
+
+    
 
 }

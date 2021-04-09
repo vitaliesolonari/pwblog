@@ -7,14 +7,12 @@ package it.tss.pwblog.blog.entity;
 
 import it.tss.pwblog.blog.boundary.dto.ArticleCreate;
 import it.tss.pwblog.blog.boundary.dto.ArticleUpdate;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -23,11 +21,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
+ *
  * @author User
  */
+@NamedQueries({
+    @NamedQuery(name = "Article.findByTag", query = "SELECT E FROM Article E WHERE :tag MEMBER OF E.tags")
+})
 @Entity
 @Table(name = "articles")
-public class Article extends AbstractEntity implements Serializable {
+public class Article extends AbstractEntity {
 
     @Id
     @SequenceGenerator(name = "article_sequence", sequenceName = "article_sequence", initialValue = 1, allocationSize = 1)
@@ -36,21 +38,21 @@ public class Article extends AbstractEntity implements Serializable {
 
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private String text;
 
     @Column(nullable = false)
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     private List<String> tags = new ArrayList<>();
 
     public Article() {
     }
 
-    public Article(ArticleCreate a, Long userId) {
+    public Article(ArticleCreate a) {
         this.title = a.title;
         this.text = a.text;
         this.tags = (ArrayList<String>) a.tags;
-        this.createdById = userId;
     }
 
     public Long getId() {
@@ -100,7 +102,7 @@ public class Article extends AbstractEntity implements Serializable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.id);
         return hash;
     }
 

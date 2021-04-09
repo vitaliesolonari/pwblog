@@ -28,9 +28,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.eclipse.microprofile.jwt.Claim;
-import org.eclipse.microprofile.jwt.Claims;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
  *
@@ -40,12 +37,8 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 @Path("/articles")
 public class ArticlesResource {
 
-    @Inject
-    @Claim(standard = Claims.sub)
-    Long userId;
-
     @Context
-    private ResourceContext resource; // usato per passare al singolo articolo
+    private ResourceContext resource;
 
     @Inject
     ArticleStore store;
@@ -63,16 +56,16 @@ public class ArticlesResource {
     @RolesAllowed({"ADMIN", "USER"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Article> searchAllArticles() {
-        return store.findAllArticles().orElseThrow(() -> new NotFoundException());
+    public List<Article> searchAllArticles(@QueryParam("start") int start, @QueryParam("maxResult") int maxResult) {
+        return store.findAllArticles(start, maxResult).orElseThrow(() -> new NotFoundException());
     }
 
-    @RolesAllowed({"ADMIN"})
+    @PermitAll
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createArticle(@Valid ArticleCreate a) {
-        Article created = store.createArt(new Article(a, userId));
+        Article created = store.createArt(new Article(a));
         return Response.status(Response.Status.CREATED)
                 .entity(created)
                 .build();
@@ -82,7 +75,8 @@ public class ArticlesResource {
     @Path("{articleId}")
     public ArticleResource search(@PathParam("articleId") Long id) {
         ArticleResource sub = resource.getResource(ArticleResource.class);
-        sub.setArticleId(id);
+        sub.setId(id);
         return sub;
     }
+
 }
